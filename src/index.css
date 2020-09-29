@@ -1,0 +1,16 @@
+.error {
+  color: red;
+  background: lightgray;
+  font-size: 20px;
+  border: solid;
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 10px;
+}
+
+.note {
+  color: green;
+  font-size: 48px;
+  font-style: italic;
+  padding: 10px;
+}

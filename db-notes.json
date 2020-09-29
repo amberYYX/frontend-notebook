@@ -1,0 +1,30 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": 2,
+      "content": "Browser can execute only Javescript",
+      "important": true
+    },
+    {
+      "id": 3,
+      "content": "Get and Post",
+      "important": true
+    },
+    {
+      "id": 4,
+      "content": "Post is used to add data to a REST api",
+      "important": true
+    },
+    {
+      "content": "test",
+      "date": "2020-09-11T14:18:22.246Z",
+      "important": false,
+      "id": 5
+    }
+  ]
+}
