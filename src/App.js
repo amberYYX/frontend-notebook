@@ -46,6 +46,21 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      noteService.setToken(user.token);
+    }
+  }, []);
+
+  /* 
+  The empty array as the parameter of the effect 
+  ensures that the effect is executed only 
+  when the component is rendered for the first time.
+  */
+
   const addNote = (event) => {
     event.preventDefault();
     const noteObject = {
@@ -67,7 +82,6 @@ const App = () => {
 
   const handleUsernameInput = (event) => {
     setUsername(event.target.value);
-    console.log(event.target.value);
   };
 
   const handlePasswordInput = (event) => {
@@ -111,8 +125,11 @@ const App = () => {
         username,
         password,
       });
+
+      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
+      // window.localStorage.getItem("loggedNoteappUser");
+      noteService.setToken(user.token);
       setUser(user);
-      console.log(user);
       setUsername("");
       setPassword("");
     } catch (expection) {
@@ -121,6 +138,10 @@ const App = () => {
         setErrorMessage(null);
       }, 3000);
     }
+  };
+
+  const handleLogOut = () => {
+    window.localStorage.removeItem("loggedNoteappUser");
   };
 
   //-----------------FORM------------------
@@ -163,6 +184,7 @@ const App = () => {
       ) : (
         <div>
           <p>{user.name} logged-in</p>
+          <button onClick={handleLogOut}>log out</button>
           {noteForm()}
         </div>
       )}
