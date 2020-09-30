@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Note from "./components/Note";
 import LoginForm from "./components/LoginForm";
@@ -26,22 +26,12 @@ const Footer = () => {
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState(null);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   axios
-  //   .get("http://localhost:3001/notes")
-  //   .then((response) => {
-  //     setNotes(response.data);
-  //   });
-  // }, []);
+  const noteFormRef = useRef();
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -63,36 +53,6 @@ const App = () => {
   ensures that the effect is executed only 
   when the component is rendered for the first time.
   */
-
-  const addNote = (event) => {
-    event.preventDefault();
-
-    console.log("add new note");
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
-      id: notes.length + 1,
-    };
-
-    noteService.create(noteObject).then((returnNote) => {
-      setNotes(notes.concat(returnNote));
-      setNewNote("");
-    });
-  };
-
-  const handleNoteChange = (event) => {
-    // console.log(event.target.value);
-    setNewNote(event.target.value);
-  };
-
-  const handleUsernameInput = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordInput = (event) => {
-    setPassword(event.target.value);
-  };
 
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
@@ -124,21 +84,16 @@ const App = () => {
     return <div className="error">{message}</div>;
   };
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (userInfo) => {
     console.log("login");
-    event.preventDefault();
+    // event.preventDefault();
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
+      const user = await loginService.login(userInfo);
 
       window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
       // window.localStorage.getItem("loggedNoteappUser");
       noteService.setToken(user.token);
       setUser(user);
-      setUsername("");
-      setPassword("");
     } catch (expection) {
       setErrorMessage("wrong credentials");
       setTimeout(() => {
@@ -153,23 +108,20 @@ const App = () => {
 
   const loginForm = () => (
     <Togglable buttonLabel="login">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameInput={handleUsernameInput}
-        handlePasswordInput={handlePasswordInput}
-        handleLogin={handleLogin}
-      ></LoginForm>
+      <LoginForm loginAction={handleLogin}></LoginForm>
     </Togglable>
   );
 
+  const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility();
+    noteService.create(noteObject).then((returnedNote) => {
+      setNotes(notes.concat(returnedNote));
+    });
+  };
+
   const noteForm = () => (
-    <Togglable buttonLabel="new note">
-      <NoteForm
-        onSubmit={addNote}
-        value={newNote}
-        handleNoteChange={handleNoteChange}
-      />
+    <Togglable buttonLabel="new note" ref={noteFormRef}>
+      <NoteForm createNote={addNote} />
     </Togglable>
   );
 
