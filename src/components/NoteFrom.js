@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const NoteForm = ({createNote }) => {
-
+const NoteForm = ({ createNote }) => {
   const [newNote, setNewNote] = useState('')
 
   const handleNoteChange = (e) => {
     setNewNote(e.target.value)
   }
-  
+
   const addNote = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     createNote({
       content: newNote,
@@ -17,18 +17,20 @@ const NoteForm = ({createNote }) => {
     })
 
     setNewNote('')
-  };
+  }
 
   return (
-    <div>
+    <div className='noteFormDiv'>
       <form onSubmit={addNote}>
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">save</button>
       </form>
     </div>
   )
-
 }
-  
+
+NoteForm.propTypes = {
+  createNote: PropTypes.func.isRequired,
+}
 
 export default NoteForm
